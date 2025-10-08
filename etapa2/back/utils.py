@@ -60,11 +60,12 @@ def limpiar_texto(texto):
     
     return " ".join(tokens)
 
-def clean_df(df: pd.DataFrame, use_nltk: bool = True) -> pd.DataFrame:
+def clean_df(df: pd.DataFrame, use_nltk: bool = True, use_short_text: bool = False) -> pd.DataFrame:
     df_ = df.copy()
     drop_nans(df_)
     drop_duplicates(df_)
-    drop_short_texts(df_, min_length=300)
+    
+    drop_short_texts(df_, min_length=300) if not use_short_text else None
     df_['textos'] = df_['textos'].apply(limpiar_texto) if use_nltk else df_['textos']
     return df_
     pass
