@@ -1,0 +1,14 @@
+{
+  "created_at": "20251011_135526",
+  "model_path": "/Users/volunteer/Downloads/proyecto1-bi/etapa2/retrain_models/model_20251011_135526.pkl",
+  "metrics": {
+    "precision": NaN,
+    "recall": NaN,
+    "f1": 0.9696223395230097
+  },
+  "md5": "82aeb1397fb71be4c49ce0b3b4acee29",
+  "strategy": "online",
+  "pipeline": "sgd_online",
+  "n_new": 30,
+  "n_total": 2526
+}

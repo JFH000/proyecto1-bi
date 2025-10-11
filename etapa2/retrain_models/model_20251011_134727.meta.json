@@ -1,0 +1,15 @@
+{
+  "created_at": "20251011_134727",
+  "model_path": "/Users/volunteer/Downloads/proyecto1-bi/etapa2/retrain_models/model_20251011_134727.pkl",
+  "metrics": {
+    "precision": 0.9823132197004223,
+    "recall": 0.9818399465557333,
+    "f1": 0.9820598571366452
+  },
+  "md5": "cf8dfda4054677e27e5501b0a0260b4d",
+  "strategy": "reweight",
+  "pipeline": "svc_calibrated",
+  "n_new": 30,
+  "n_total": 2526,
+  "weight_new": 2.0
+}

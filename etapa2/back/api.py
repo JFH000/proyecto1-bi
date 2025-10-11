@@ -1,5 +1,5 @@
 # etapa2/back/api.py
-from typing import List, Optional
+from typing import List, Optional, Literal
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
@@ -40,7 +40,9 @@ class PredictResponse(BaseModel):
     predictions: List[PredictItem]
 
 class RetrainRequest(BaseModel):
-    instances: List[LabeledInstance] = Field(..., min_length=30)  # 'cantidad relevante' mínima
+    instances: List[LabeledInstance] = Field(..., min_length=30)
+    strategy: Literal["merge_all", "reweight", "online"] = "merge_all"
+    pipeline: Literal["svc_calibrated", "logreg", "sgd_online"] = "svc_calibrated"
 
 class RetrainResponse(BaseModel):
     precision: float
@@ -64,7 +66,11 @@ def predict(req: PredictRequest):
 @app.post("/retrain", response_model=RetrainResponse)
 def retrain(req: RetrainRequest):
     try:
-        metrics, paths = retrain_from_records([it.model_dump() for it in req.instances])
+        metrics, paths = retrain_from_records(
+            [it.model_dump() for it in req.instances],
+            strategy=req.strategy,
+            pipeline_name=req.pipeline
+        )
         return {
             "precision": metrics["precision"],
             "recall": metrics["recall"],
