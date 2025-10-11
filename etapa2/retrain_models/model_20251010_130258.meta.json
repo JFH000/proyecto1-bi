@@ -1,0 +1,21 @@
+{
+  "created_at": "20251010_130258",
+  "model_path": "/Users/volunteer/Downloads/proyecto1-bi/etapa2/retrain_models/model_20251010_130258.pkl",
+  "metrics": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "md5": "9fc1066206dfb3e9767b5d550a146eca",
+  "n_total": 30,
+  "n_train": 24,
+  "n_test": 6,
+  "class_distribution": {
+    "1": 10,
+    "3": 10,
+    "4": 10
+  },
+  "pipeline": "svc_calibrated",
+  "test_size": 0.2,
+  "random_state": 42
+}

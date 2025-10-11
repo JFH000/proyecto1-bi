@@ -1,21 +1,32 @@
-
-import joblib
+# etapa2/back/last_model.py
 import os
+import glob
+import joblib
 
-first_model = joblib.load('etapa2/first_model.pkl')
-folder_path = "etapa2/retrain_models"
+# carpetas relativas a /etapa2/back
+BACK_DIR = os.path.dirname(os.path.abspath(__file__))
+FIRST_MODEL = os.path.normpath(os.path.join(BACK_DIR, "..", "first_model.pkl"))
+RETRAIN_DIR = os.path.normpath(os.path.join(BACK_DIR, "..", "retrain_models"))
+
+def get_last_model_path() -> str:
+    os.makedirs(RETRAIN_DIR, exist_ok=True)
+    # solo modelos .pkl (ignora .gitkeep y otros)
+    candidates = sorted(
+        glob.glob(os.path.join(RETRAIN_DIR, "*.pkl")),
+        key=os.path.getctime
+    )
+    return candidates[-1] if candidates else FIRST_MODEL
 
 def get_last_model():
-    files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+    path = get_last_model_path()
+    if not os.path.isfile(path):
+        raise FileNotFoundError(
+            f"No se encontró un modelo en '{path}'. "
+            "Asegura 'etapa2/first_model.pkl' o genera uno en 'etapa2/retrain_models/'."
+        )
+    return joblib.load(path)
 
-    latest_file = max(files, key=os.path.getctime)
-    if os.path.basename(latest_file) == ".gitkeep":
-        print("El último archivo es .gitkeep")
-        return first_model
-    else:
-        print("El último archivo NO es .gitkeep:", latest_file)
-        actual_model = joblib.load(latest_file)
-        return actual_model
-    pass
-
-get_last_model()
+if __name__ == "__main__":
+    # smoke test opcional
+    m = get_last_model()
+    print("Modelo cargado:", type(m))
