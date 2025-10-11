@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analítica de Textos - ODS</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    window.addEventListener("beforeunload", (e) => {
+      e.preventDefault();
+      e.returnValue = "";
+    });
+  
+    document.addEventListener("submit", (e) => e.preventDefault());
+  </script>
+  
+</head>
+<body>
+  <main class="container">
+
+    <h3>Grupo 32</h3>
+
+    <img src="logo.png" alt="Logo">
+
+    <h1>Clasificador de Opiniones - ODS</h1>
+
+    <section class="input-section">
+      <h3 for="texto">Escribe una opinión ciudadana:</h3>
+      <textarea id="texto" rows="6" placeholder="Ejemplo: La educación debería ser más accesible para todos."></textarea>
+    </section>
+
+    <section class="buttons">
+      <button type="button" onclick="clasificarTexto()">Clasificar texto</button>
+    </section>
+
+    <section class="upload-section">
+      <h3 for="texto">Reentrenar:</h2>
+    </section>
+
+    <section class="input-file">
+      <input type="file" id="fileInput" accept=".xlsx,.json" />
+    </section>
+
+    <section class="buttons">
+      <button type="button" onclick="reentrenarDesdeArchivo()">Reentrenar modelo</button>
+    </section>
+
+    <section id="resultado" class="result">
+      <h2>Resultado:</h2>
+      <p id="prediccion">Esperando texto...</p>
+      <p id="probabilidad"></p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <script src="script.js"></script>
+</body>
+</html>

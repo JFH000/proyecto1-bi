@@ -3,11 +3,22 @@ from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
+from fastapi.middleware.cors import CORSMiddleware
+
 from .predict import predict as predict_fn
 from .retrain_service import retrain_from_records
 from .last_model import get_last_model_path
 
 app = FastAPI(title="ODS Text Analytics API - Etapa 2")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # ===== Esquemas =====
 class Instance(BaseModel):
