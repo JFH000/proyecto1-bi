@@ -1,4 +1,7 @@
-const API_URL = "http://127.0.0.1:8000"; // asegúrate que coincida con el backend
+// Configuración para Docker - el frontend se conecta al backend por nombre del servicio
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+  ? "http://127.0.0.1:8000"  // Para desarrollo local
+  : "http://backend:8000";   // Para Docker (nombre del servicio)
 
 function mostrarLoader() {
   document.getElementById("loader").style.display = "flex";
