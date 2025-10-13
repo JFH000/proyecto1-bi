@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Analítica de Textos - ODS</title>
   <link rel="stylesheet" href="styles.css" />
+
   <script>
     window.addEventListener("beforeunload", (e) => {
       e.preventDefault();
       e.returnValue = "";
     });
-  
     document.addEventListener("submit", (e) => e.preventDefault());
   </script>
-  
 </head>
+
 <body>
   <main class="container">
 
@@ -25,7 +25,7 @@
     <h1>Clasificador de Opiniones - ODS</h1>
 
     <section class="input-section">
-      <h3 for="texto">Escribe una opinión ciudadana:</h3>
+      <h3>Escribe una opinión ciudadana:</h3>
       <textarea id="texto" rows="6" placeholder="Ejemplo: La educación debería ser más accesible para todos."></textarea>
     </section>
 
@@ -34,7 +34,7 @@
     </section>
 
     <section class="upload-section">
-      <h3 for="texto">Reentrenar:</h2>
+      <h3>Reentrenar:</h3>
     </section>
 
     <section class="input-file">
@@ -50,10 +50,15 @@
       <p id="prediccion">Esperando texto...</p>
       <p id="probabilidad"></p>
     </section>
+
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <div id="loader" class="loader-overlay" style="display: none;">
+    <div class="loader"></div>
+    <p class="loader-text">Procesando...</p>
+  </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
