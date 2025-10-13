@@ -53,7 +53,6 @@ proyecto1-bi/
 ## Documentación
 
 - [Wiki Etapa 2](README_ETAPA2_WIKI.md) - Documentación completa
-- [Instrucciones Docker](DOCKER_INSTRUCTIONS.md) - Guía de despliegue
 - [README Backend](etapa2/back/README.md) - Documentación técnica API
 - [README Frontend](etapa2/front/README.md) - Documentación interfaz web
 
