@@ -1,144 +1,70 @@
-# Backend – Analítica de Textos (Etapa 2)
+# Proyecto 1 - Analítica de Textos ODS
 
-API REST para clasificar textos ODS y **reentrenar** el modelo.
+Sistema de clasificación automática de opiniones ciudadanas según los Objetivos de Desarrollo Sostenible (ODS) mediante machine learning.
 
-## 1) Requisitos
+## Características
 
-* Python ≥ 3.9
-* macOS / Linux / Windows
-* Internet solo la primera vez (descargas NLTK)
+- **Clasificación automática** de textos en español por ODS (1, 3, 4)
+- **API REST** con endpoints de predicción y reentrenamiento
+- **Demo web** intuitiva para usuarios finales
+- **Aumentación de datos** sintéticos para mejorar rendimiento
+- **Containerización** con Docker para despliegue fácil
 
-**Instalación**
+## Uso Rápido
 
+### Con Docker (Recomendado)
 ```bash
-python -m venv .venv
-# Win: .venv\Scripts\activate
-source .venv/bin/activate
-pip install -r requirements.txt
-# Si usas Parquet para el store:
-pip install -U pyarrow openpyxl
-# Asegura imports relativos:
-touch etapa2/__init__.py etapa2/back/__init__.py
+# Construir y ejecutar
+docker-compose up --build -d
+
+# Acceder
+# Frontend: http://localhost:3001
 ```
 
-## 2) Levantar la API
-
+### Desarrollo Local
 ```bash
+# Backend
 uvicorn etapa2.back.api:app --reload --port 8000
+
+# Frontend
+cd etapa2/front
+python -m http.server 5500
 ```
 
-**Smoke test**
+## Endpoints Principales
 
-```bash
-curl -s http://127.0.0.1:8000/health
-curl -s -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" \
-  -d '{"instances":[{"textos":"La salud en Colombia está mal"}]}'
+- `POST /predict` - Clasificar textos
+- `POST /retrain` - Reentrenar modelo
+- `GET /health` - Estado del servicio
+
+## Estructura del Proyecto
+
+```
+proyecto1-bi/
+├── etapa1/              # Modelo base y análisis inicial
+├── etapa2/              # API y demo web
+│   ├── back/           # Backend FastAPI
+│   ├── front/          # Frontend web
+│   └── retrain_models/ # Modelos reentrenados
+├── data/               # Datasets
+└── docs/              # Documentación
 ```
 
-> Si no existe un modelo entrenado, genera uno base (opcional):
+## Documentación
 
-```bash
-python -m etapa2.back.retrain --make-first-model \
-  --input data/datos_originales_totales.xlsx \
-  --text-col textos --label-col labels \
-  --pipeline svc_calibrated
-```
+- [Wiki Etapa 2](README_ETAPA2_WIKI.md) - Documentación completa
+- [Instrucciones Docker](DOCKER_INSTRUCTIONS.md) - Guía de despliegue
+- [README Backend](etapa2/back/README.md) - Documentación técnica API
+- [README Frontend](etapa2/front/README.md) - Documentación interfaz web
 
-## 3) Endpoints mínimos
+## Requisitos
 
-### `POST /predict`
+- Python ≥ 3.9
+- Docker (opcional)
+- Navegador web moderno
 
-Entrada:
+## Equipo
 
-```json
-{ "instances": [ { "textos": "La salud en Colombia está mal" } ] }
-```
-
-Salida:
-
-```json
-{ "predictions": [ { "label": 3, "label_name": "Salud y bienestar", "prob": 0.99 } ] }
-```
-
-### `POST /retrain`
-
-* Requiere **≥ 30** registros y **≥ 2 clases**.
-  Entrada (ejemplo):
-
-```json
-{
-  "instances": [
-    { "textos": "texto sobre pobreza", "labels": 1 },
-    { "textos": "texto sobre salud",   "labels": 3 },
-    { "textos": "texto sobre educación","labels": 4 }
-  ]
-}
-```
-
-Salida:
-
-```json
-{ "precision": 0.98, "recall": 0.98, "f1": 0.98, "model_version_path": "etapa2/retrain_models/model_YYYYMMDD_HHMMSS.pkl" }
-```
-
-> Estrategias opcionales: `strategy: "merge_all" | "reweight" | "online"` y `pipeline: "svc_calibrated" | "logreg" | "sgd_online"`.
-> Si no especificas, usa `merge_all` + `svc_calibrated`.
-
-## 4) Probar rápido (cURL)
-
-```bash
-# salud
-curl -s http://127.0.0.1:8000/health
-
-# predicción
-curl -s -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" \
-  -d '{"instances":[{"textos":"Urge mejorar la educación rural"}]}'
-
-# reentrenamiento (lee payload_retrain.json con ≥30 filas)
-curl -s -X POST http://127.0.0.1:8000/retrain -H "Content-Type: application/json" \
-  -d @payload_retrain.json
-```
-
-## 5) Conectar con el front actual
-
-Archivos del front: `index.html`, `styles.css`, `script.js`.
-
-1. **Edita la URL de la API** en `script.js`:
-
-   ```js
-   const API_URL = "http://127.0.0.1:8000";
-   ```
-2. **Sirve el front** (opción simple):
-
-   ```bash
-   # en la carpeta del front
-   python -m http.server 5500
-   # abre http://127.0.0.1:5500 en el navegador
-   ```
-
-   > La API ya viene con **CORS permitido** (modo demo).
-3. **Clasificar**: escribe un texto y pulsa “Clasificar texto”.
-4. **Reentrenar**: carga un **.xlsx** o **.json** con columnas mapeables a:
-
-   * `textos` (o `Texto`, `Comentario`)
-   * `labels` enteros (o `ODS`, `Clasificacion`)
-     Deben ser **≥ 30** filas y **≥ 2** clases. Pulsa “Reentrenar modelo”.
-
-**Ejemplo .json para reentrenar**
-
-```json
-[
-  { "textos": "la pobreza extrema debe reducirse", "labels": 1 },
-  { "textos": "mejoras urgentes en hospitales",    "labels": 3 },
-  { "textos": "acceso a educación de calidad",     "labels": 4 }
-]
-```
-
-## 6) Problemas comunes (rápidas)
-
-* **Parquet**: instala `pyarrow` o usa fallback CSV (si está implementado).
-* **NLTK**: la primera corrida descarga recursos; si falla, el backend usa *fallback*.
-* **422 / 400 en `/retrain`**: revisa que haya **≥ 30** filas y **≥ 2** clases.
-* **CORS**: ya habilitado “*” en demo; en producción restrínge `allow_origins`.
-
----
+- **Análisis y aumentación de datos**: Juan Hernández
+- **Desarrollo API y reentrenamiento**: David Elias Fororo Cobos  
+- **Frontend y UX**: Jerónimo A. Pineda Cano
